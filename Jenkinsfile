@@ -60,10 +60,10 @@ pipeline {
                     def uploadSpec = """{
                         "files": [
                             {
-                                "pattern": "jarstaging/(*),
-                                "target": "libs-release-local/{1}",
-                                "flat": "false",
-                                "props" : "${properties}",
+                                "pattern": "jarstaging/*.*", // This pattern will match all files in the jarstaging directory
+                                "target": "libs-release-local/",
+                                "flat": "false", // Preserves the directory structure
+                                "props" : "buildid=${env.BUILD_ID};commitid=${env.GIT_COMMIT}",
                                 "exclusions": [ "*.sha1", "*.md5"]
                             }
                         ]
