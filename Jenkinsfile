@@ -61,10 +61,10 @@ pipeline {
                     def uploadSpec = """{
                         "files": [
                             {
-                                "pattern": "jarstaging/com/valaxy/demo-workshop/2.1.2/*.jar",
+                                "pattern": "jarstaging/com/valaxy/demo-workshop/2.1.2/*.*",
                                 "target": "libs-release-local/com/valaxy/demo-workshop/2.1.2/",
-                                "flat": "false",
-                                "recursive": "true",
+                                "flat": "true", 
+                                "recursive": "true", 
                                 "props": "build.number=${env.BUILD_NUMBER};commit.id=${env.GIT_COMMIT}",
                                 "exclusions": [ "*.sha1", "*.md5"]
                             }
