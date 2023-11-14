@@ -7,6 +7,7 @@ pipeline {
 
     environment {
         PATH = ":/opt/apache-maven-3.9.5/bin:$PATH"
+        registry = 'https://xtianechicajfrog.jfrog.io'
     }
 
     stages {
@@ -50,13 +51,11 @@ pipeline {
             }
         }
 
-        def registry = 'https://xtianechicajfrog.jfrog.io'
-
         stage("Jar Publish") {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
-                    def server = Artifactory.newServer(url: registry, credentialsId: 'artifact-cred')
+                    def server = Artifactory.newServer(url: env.registry, credentialsId: 'artifact-cred')
                     def uploadSpec = """{
                         "files": [
                             {
@@ -64,6 +63,8 @@ pipeline {
                                 "target": "libs-release-local/myapp/${env.BUILD_NUMBER}",
                                 "props": "build.number=${env.BUILD_NUMBER};build.id=${env.BUILD_ID}",
                                 "flat": "true"
+                                "props" : "${properties}",
+                                "exclusions": [ "*.sha1", "*.md5"]
                             }
                         ]
                     }"""
