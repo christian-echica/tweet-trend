@@ -32,7 +32,6 @@ pipeline {
             }
             steps {
                 withSonarQubeEnv('xtianexica-sonarqube-server') {
-                    // If you have configured more than one global server connection, you can specify its name
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
@@ -41,12 +40,36 @@ pipeline {
         stage('Quality Gate') {
             steps {
                 script {
-                    timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-                        def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
+                    timeout(time: 1, unit: 'HOURS') {
+                        def qg = waitForQualityGate()
                         if (qg.status != 'OK') {
                             error "Pipeline aborted due to quality gate failure: ${qg.status}"
                         }
                     }
+                }
+            }
+        }
+
+        stage("Jar Publish") {
+            steps {
+                script {
+                    echo '<--------------- Jar Publish Started --------------->'
+                    def server = Artifactory.server(url: 'https://xtianechicajfrog.jfrog.io/artifactory', credentialsId: 'artifact-cred')
+                    def uploadSpec = """{
+                        "files": [
+                            {
+                                "pattern": "jarstaging/(*)",
+                                "target": "libs-release-local/{1}",
+                                "flat": "false",
+                                "props": "build.number=${env.BUILD_NUMBER};build.id=${env.BUILD_ID}",
+                                "exclusions": [ "*.sha1", "*.md5" ]
+                            }
+                        ]
+                    }"""
+                    def buildInfo = server.upload spec: uploadSpec
+                    buildInfo.env.capture = true
+                    server.publishBuildInfo buildInfo
+                    echo '<--------------- Jar Publish Ended --------------->'
                 }
             }
         }
