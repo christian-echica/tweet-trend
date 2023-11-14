@@ -50,19 +50,20 @@ pipeline {
             }
         }
 
+        def registry = 'https://xtianechicajfrog.jfrog.io'
+
         stage("Jar Publish") {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
-                    def server = Artifactory.server(url: 'https://xtianechicajfrog.jfrog.io/artifactory', credentialsId: 'artifact-cred')
+                    def server = Artifactory.newServer(url: registry, credentialsId: 'artifact-cred')
                     def uploadSpec = """{
                         "files": [
                             {
-                                "pattern": "jarstaging/(*)",
-                                "target": "libs-release-local/{1}",
-                                "flat": "false",
+                                "pattern": "jarstaging/*.*",
+                                "target": "libs-release-local/myapp/${env.BUILD_NUMBER}",
                                 "props": "build.number=${env.BUILD_NUMBER};build.id=${env.BUILD_ID}",
-                                "exclusions": [ "*.sha1", "*.md5" ]
+                                "flat": "true"
                             }
                         ]
                     }"""
@@ -73,5 +74,6 @@ pipeline {
                 }
             }
         }
+
     }
 }
