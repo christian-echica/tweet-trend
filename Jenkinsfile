@@ -82,7 +82,7 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Docker Build Started --------------->'
-                    def imageName = 'xtianechicajfrog.jfrog.io/xtianexica-docker/ttrend'
+                    def imageName = 'xtianechicajfrog.jfrog.io/xtianexica-docker-local/ttrend'
                     def version = '2.1.2'
                     app = docker.build(imageName + ":" + version)
                     echo '<--------------- Docker Build Ends --------------->'
