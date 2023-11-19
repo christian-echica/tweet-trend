@@ -94,7 +94,7 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Docker Publish Started --------------->'  
-                    docker.withRegistry(registry, 'artifactory_token') {
+                    docker.withRegistry(registry, 'artifact-cred') {
                         app.push()
                     }    
                     echo '<--------------- Docker Publish Ended --------------->'  
