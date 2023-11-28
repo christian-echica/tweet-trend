@@ -77,29 +77,14 @@ pipeline {
                 }
             }
         }
-
-        stage("Docker Build") {
+        stage('Deploy') {
             steps {
                 script {
-                    echo '<--------------- Docker Build Started --------------->'
-                    def imageName = 'xtianechicajfrog.jfrog.io/xtianexica-docker-local/ttrend'
-                    def version = '2.1.2'
-                    app = docker.build(imageName + ":" + version)
-                    echo '<--------------- Docker Build Ends --------------->'
+                    echo "----------- deployment started ----------"
+                    sh './deploy.sh'
+                    echo "----------- deployment completed ----------"
                 }
             }
         }
-
-        stage("Docker Publish") {
-            steps {
-                script {
-                    echo '<--------------- Docker Publish Started --------------->'  
-                    docker.withRegistry(registry, 'artifact-cred') {
-                        app.push()
-                    }    
-                    echo '<--------------- Docker Publish Ended --------------->'  
-                }
-            }
-        }        
     }
 }
